@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html lang="vi"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxNzM0NDMzMzMwNzU5MTUwMjMzNCIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjX2RiNTYzZmI1MWUzYTk0MTlfdWxpcy1ncmFkdWF0aW9uLWludml0YXRpb24uaHRtbC05MTEifSwiZXhwIjoxNzk1MjMyMTEyLCJpYXQiOjE3OTUyMjg1MTIsImFsZyI6IlJTMjU2In0.ECl4_TxVZN80XVtnPS1rM5yC7hsTxIRv44oWlwM5VxPuKYYyI09xeCGj-I_SOb4q2e7qGkQFik72aUR-QA6OTm1Ntav1QKKJx7p8GcCu1myZ0jv3SY9Gvzdo2gKAvdaHTTvcPaXx_o8Mv4-fN7h3UXkn2GSGGX8oad9I6v7-O3ZD903A6iG4SPkDqTpG8Zww-8jVPoTHNVF5jN1J0htZL4kFB_Rgjq8phfMtgOA1_Ibl6Lm2XEEK8yzHAMYZ06XAsHldmLAhbrUg5CxfalkYGmQaEjkppvTcp2kZJL4P1T9hbWTEQNI7bA7-Vhn-KOalYokEZ6tBAElQu_WRmC5FFg","c_db563fb51e3a9419_ulis-graduation-invitation.html-911")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.i=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.extensions="";var l=0,t=null,r=null,q=[],F=new TextEncoder,
+G=new TextDecoder;c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*
+16|0;return(f==="x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;
+(g=t)==null||g.postMessage(a)}};Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
+  const OVERLAY_SELECTOR =
+    'dialog[open], [role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"], [role="combobox"]';
+
+  function isVisibleOverlay(element) {
+    if (element.closest('[hidden], [aria-hidden="true"], [inert]')) {
+      return false;
+    }
+    if (window.getComputedStyle(element).visibility === 'hidden') {
+      return false;
+    }
+    for (let cur = element; cur; cur = cur.parentElement) {
+      if (window.getComputedStyle(cur).display === 'none') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function hasOpenOverlay() {
+    const candidates = document.querySelectorAll(OVERLAY_SELECTOR);
+    for (let i = 0; i < candidates.length; i++) {
+      if (isVisibleOverlay(candidates[i])) {
+        return true;
+      }
+    }
+    try {
+      if (document.querySelector('[popover]:popover-open')) {
+        return true;
+      }
+    } catch (e) {
+      // Ignore engines that do not support :popover-open.
+    }
+    return false;
+  }
+
+  function isNonEmptySearchInput(target) {
+    return (
+      Boolean(target) &&
+      target.tagName === 'INPUT' &&
+      typeof target.type === 'string' &&
+      target.type.toLowerCase() === 'search' &&
+      typeof target.value === 'string' &&
+      target.value.length > 0
+    );
+  }
+
+  function shouldIgnoreEscape(event) {
+    return (
+      event.key !== 'Escape' ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.isComposing ||
+      event.repeat ||
+      event.keyCode === 229 ||
+      isNonEmptySearchInput(event.target)
+    );
+  }
+
+  let shouldIgnoreCaptureState = false;
+
+  window.addEventListener(
+    'keydown',
+    function(event) {
+      if (event.key === 'Escape') {
+        shouldIgnoreCaptureState =
+          hasOpenOverlay() || isNonEmptySearchInput(event.target);
+      }
+    },
+    {capture: true},
+  );
+
+  window.addEventListener('keydown', function(event) {
+    if (
+      shouldIgnoreEscape(event) ||
+      event.defaultPrevented ||
+      shouldIgnoreCaptureState
+    ) {
+      return;
+    }
+    const wasBlockedOnCapture = shouldIgnoreCaptureState;
+    queueMicrotask(function() {
+      if (event.defaultPrevented || wasBlockedOnCapture) {
+        return;
+      }
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({'type': 'escapeKey'}, '*');
+      }
+    });
+  });
+})();</script><script data-bard-client-injected="true">(function() {
+  function normalizeSlug(str) {
+    try {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^p{L}p{N}s_-]/gu, '')
+        .replace(/s+/g, '-');
+    } catch (e) {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9s_-]/g, '')
+        .replace(/s+/g, '-');
+    }
+  }
+
+  function findTargetElement(hash) {
+    if (!hash || hash === '#') {
+      return null;
+    }
+    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {
+      // Ignore URI malformed errors.
+    }
+
+    // 1. Direct ID match (raw and decoded).
+    let target = document.getElementById(rawId) || document.getElementById(decodedId);
+    if (target) {
+      return target;
+    }
+
+    // 2. Name attribute match (<a name="...">).
+    try {
+      if (typeof CSS !== 'undefined' && CSS.escape) {
+        target =
+          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
+          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
+      } else {
+        const namedElements = document.getElementsByName(rawId);
+        if (namedElements && namedElements.length > 0) {
+          return namedElements[0];
+        }
+      }
+    } catch (e) {
+      // Ignore querySelector syntax errors.
+    }
+    if (target) {
+      return target;
+    }
+
+    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
+    const targetSlug = normalizeSlug(decodedId);
+    if (targetSlug) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        if (normalizeSlug(heading.textContent || '') === targetSlug) {
+          return heading;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
+    if (!anchor) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (
+      !href ||
+      href.trim().toLowerCase().startsWith('javascript:') ||
+      anchor.hasAttribute('download')
+    ) {
+      return;
+    }
+
+    // Check if the link is an in-page hash / anchor link.
+    if (href.startsWith('#')) {
+      event.preventDefault();
+      const targetElement = findTargetElement(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      return;
+    }
+
+    // Check if the URL has the same origin/pathname but with a hash.
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.hash &&
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname
+      ) {
+        event.preventDefault();
+        const targetElement = findTargetElement(url.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        return;
+      }
+    } catch (e) {
+      // Fall through if URL parsing fails.
+    }
+
+    // For all external or full navigation links, prevent iframe-level navigation
+    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
+    // safely in a new tab/window.
+    if (anchor.target !== '_blank') {
+      event.preventDefault();
+      window.open(anchor.href, '_blank', 'noopener,noreferrer');
+    }
+  }, {capture: true});
+})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thiệp Mời Lễ Trao Bằng Tốt Nghiệp | ULIS - ĐHQGHN 04.12.2026</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Editorial Serif, Script & Clean Vietnamese Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&amp;family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;family=Dancing+Script:wght@500;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#FAF7F2',
+            parchment: '#F2ECE1',
+            sand: '#E6DCCD',
+            navy: '#1A2B42',
+            ulis: '#1E3A5F',
+            burgundy: '#7A202E',
+            gold: '#B5935B',
+            ink: '#2C2A29',
+            muted: '#6E665F',
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', '"Cormorant Garamond"', 'Georgia', 'serif'],
+            editorial: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            script: ['"Dancing Script"', 'cursive'],
+            sans: ['"Be Vietnam Pro"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Subtle paper grain & smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+      background-color: #EAE3D7;
+    }
+
+    body {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      color: #2C2A29;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(181, 147, 91, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 80% 80%, rgba(26, 43, 66, 0.07) 0%, transparent 45%);
+    }
+
+    /* Main editorial card paper texture */
+    .paper-surface {
+      background-color: #FAF7F2;
+      background-image: radial-gradient(rgba(181, 147, 91, 0.06) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+
+    /* Scroll reveal animations inspired by JMII invitations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1), transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.12s; }
+    .reveal-delay-2 { transition-delay: 0.24s; }
+    .reveal-delay-3 { transition-delay: 0.36s; }
+
+    /* Envelope opening transition */
+    #envelope-overlay {
+      transition: opacity 0.8s ease, transform 0.9s cubic-bezier(0.22, 1, 0.36, 1), visibility 0.8s;
+    }
+
+    #envelope-overlay.opened {
+      opacity: 0;
+      transform: scale(1.06);
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Wax seal gentle pulse */
+    @keyframes sealPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 8px 25px rgba(122, 32, 46, 0.32); }
+      50% { transform: scale(1.045); box-shadow: 0 12px 32px rgba(122, 32, 46, 0.48); }
+    }
+    .wax-seal {
+      animation: sealPulse 2.8s ease-in-out infinite;
+    }
+
+    /* Arch frame styling */
+    .arch-frame {
+      border-radius: 9999px 9999px 16px 16px;
+    }
+
+    /* Delicate double border */
+    .editorial-border {
+      box-shadow: inset 0 0 0 1px rgba(181, 147, 91, 0.35);
+    }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F2ECE1;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #C7B293;
+      border-radius: 999px;
+    }
+
+    /* Confetti canvas overlay */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 90;
+    }
+  </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:"Be Vietnam Pro", sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.visible{visibility:visible}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.-inset-2\.5{inset:-0.625rem}.inset-0{inset:0px}.-left-\[31px\]{left:-31px}.bottom-0{bottom:0px}.bottom-3{bottom:0.75rem}.bottom-4{bottom:1rem}.left-0{left:0px}.left-1\/2{left:50%}.left-3{left:0.75rem}.right-0{right:0px}.right-3{right:0.75rem}.right-4{right:1rem}.top-0{top:0px}.top-1\.5{top:0.375rem}.top-3{top:0.75rem}.top-5{top:1.25rem}.z-10{z-index:10}.z-40{z-index:40}.z-50{z-index:50}.z-\[100\]{z-index:100}.col-span-2{grid-column:span 2 / span 2}.mx-auto{margin-left:auto;margin-right:auto}.my-2{margin-top:0.5rem;margin-bottom:0.5rem}.my-4{margin-top:1rem;margin-bottom:1rem}.my-7{margin-top:1.75rem;margin-bottom:1.75rem}.my-auto{margin-top:auto;margin-bottom:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-7{margin-bottom:1.75rem}.ml-3{margin-left:0.75rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-3\.5{margin-top:0.875rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.mt-7{margin-top:1.75rem}.block{display:block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.aspect-\[16\/10\]{aspect-ratio:16/10}.aspect-\[3\/4\]{aspect-ratio:3/4}.aspect-square{aspect-ratio:1 / 1}.h-1{height:0.25rem}.h-10{height:2.5rem}.h-20{height:5rem}.h-24{height:6rem}.h-3\.5{height:0.875rem}.h-36{height:9rem}.h-4{height:1rem}.h-7{height:1.75rem}.h-8{height:2rem}.h-9{height:2.25rem}.h-\[1px\]{height:1px}.h-full{height:100%}.max-h-\[90vh\]{max-height:90vh}.min-h-screen{min-height:100vh}.w-1{width:0.25rem}.w-10{width:2.5rem}.w-16{width:4rem}.w-20{width:5rem}.w-24{width:6rem}.w-3\.5{width:0.875rem}.w-36{width:9rem}.w-4{width:1rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-9{width:2.25rem}.w-\[260px\]{width:260px}.w-full{width:100%}.max-w-\[300px\]{max-width:300px}.max-w-\[400px\]{max-width:400px}.max-w-\[460px\]{max-width:460px}.max-w-\[90vw\]{max-width:90vw}.max-w-md{max-width:28rem}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-translate-y-3{--tw-translate-y:-0.75rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-180{--tw-rotate:180deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}.grid-cols-7{grid-template-columns:repeat(7, minmax(0, 1fr))}.flex-col{flex-direction:column}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.justify-items-center{justify-items:center}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-x-1{column-gap:0.25rem}.gap-y-2{row-gap:0.5rem}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.break-words{overflow-wrap:break-word}.break-all{word-break:break-all}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-xl{border-radius:0.75rem}.rounded-bl-xl{border-bottom-left-radius:0.75rem}.rounded-br-xl{border-bottom-right-radius:0.75rem}.rounded-tl-xl{border-top-left-radius:0.75rem}.rounded-tr-xl{border-top-right-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-x{border-left-width:1px;border-right-width:1px}.border-y{border-top-width:1px;border-bottom-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-cream{--tw-border-opacity:1;border-color:rgb(250 247 242 / var(--tw-border-opacity, 1))}.border-gold{--tw-border-opacity:1;border-color:rgb(181 147 91 / var(--tw-border-opacity, 1))}.border-gold\/25{border-color:rgb(181 147 91 / 0.25)}.border-gold\/30{border-color:rgb(181 147 91 / 0.3)}.border-gold\/35{border-color:rgb(181 147 91 / 0.35)}.border-gold\/40{border-color:rgb(181 147 91 / 0.4)}.border-gold\/45{border-color:rgb(181 147 91 / 0.45)}.border-gold\/50{border-color:rgb(181 147 91 / 0.5)}.border-gold\/60{border-color:rgb(181 147 91 / 0.6)}.border-navy\/20{border-color:rgb(26 43 66 / 0.2)}.border-white{--tw-border-opacity:1;border-color:rgb(255 255 255 / var(--tw-border-opacity, 1))}.bg-\[\#18263A\]\/95{background-color:rgb(24 38 58 / 0.95)}.bg-\[\#1A2B42\]{--tw-bg-opacity:1;background-color:rgb(26 43 66 / var(--tw-bg-opacity, 1))}.bg-\[\#2C2A29\]{--tw-bg-opacity:1;background-color:rgb(44 42 41 / var(--tw-bg-opacity, 1))}.bg-\[\#7A202E\]{--tw-bg-opacity:1;background-color:rgb(122 32 46 / var(--tw-bg-opacity, 1))}.bg-\[\#D8C7B0\]{--tw-bg-opacity:1;background-color:rgb(216 199 176 / var(--tw-bg-opacity, 1))}.bg-\[\#FAF7F2\]{--tw-bg-opacity:1;background-color:rgb(250 247 242 / var(--tw-bg-opacity, 1))}.bg-burgundy{--tw-bg-opacity:1;background-color:rgb(122 32 46 / var(--tw-bg-opacity, 1))}.bg-burgundy\/10{background-color:rgb(122 32 46 / 0.1)}.bg-cream{--tw-bg-opacity:1;background-color:rgb(250 247 242 / var(--tw-bg-opacity, 1))}.bg-gold{--tw-bg-opacity:1;background-color:rgb(181 147 91 / var(--tw-bg-opacity, 1))}.bg-gold\/20{background-color:rgb(181 147 91 / 0.2)}.bg-gold\/50{background-color:rgb(181 147 91 / 0.5)}.bg-gold\/60{background-color:rgb(181 147 91 / 0.6)}.bg-navy{--tw-bg-opacity:1;background-color:rgb(26 43 66 / var(--tw-bg-opacity, 1))}.bg-navy\/10{background-color:rgb(26 43 66 / 0.1)}.bg-navy\/70{background-color:rgb(26 43 66 / 0.7)}.bg-navy\/95{background-color:rgb(26 43 66 / 0.95)}.bg-parchment{--tw-bg-opacity:1;background-color:rgb(242 236 225 / var(--tw-bg-opacity, 1))}.bg-parchment\/55{background-color:rgb(242 236 225 / 0.55)}.bg-parchment\/60{background-color:rgb(242 236 225 / 0.6)}.bg-parchment\/70{background-color:rgb(242 236 225 / 0.7)}.bg-parchment\/80{background-color:rgb(242 236 225 / 0.8)}.bg-parchment\/85{background-color:rgb(242 236 225 / 0.85)}.bg-parchment\/90{background-color:rgb(242 236 225 / 0.9)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-white\/10{background-color:rgb(255 255 255 / 0.1)}.bg-white\/90{background-color:rgb(255 255 255 / 0.9)}.bg-white\/95{background-color:rgb(255 255 255 / 0.95)}.bg-\[radial-gradient\(circle_at_50\%_35\%\2c rgba\(181\2c 147\2c 91\2c 0\.22\)\2c transparent_65\%\)\]{background-image:radial-gradient(circle at 50% 35%,rgba(181,147,91,0.22),transparent 65%)}.bg-gradient-to-b{background-image:linear-gradient(to bottom, var(--tw-gradient-stops))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-\[\#1E3350\]{--tw-gradient-from:#1E3350 var(--tw-gradient-from-position);--tw-gradient-to:rgb(30 51 80 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-burgundy{--tw-gradient-from:#7A202E var(--tw-gradient-from-position);--tw-gradient-to:rgb(122 32 46 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-navy{--tw-gradient-from:#1A2B42 var(--tw-gradient-from-position);--tw-gradient-to:rgb(26 43 66 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-transparent{--tw-gradient-from:transparent var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-\[\#1A2B42\]{--tw-gradient-to:rgb(26 43 66 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #1A2B42 var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-\[\#243B5A\]{--tw-gradient-to:rgb(36 59 90 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #243B5A var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-\[\#8E2636\]{--tw-gradient-to:rgb(142 38 54 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #8E2636 var(--tw-gradient-via-position), var(--tw-gradient-to)}.via-gold\/50{--tw-gradient-to:rgb(181 147 91 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), rgb(181 147 91 / 0.5) var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-\[\#111D2D\]{--tw-gradient-to:#111D2D var(--tw-gradient-to-position)}.to-\[\#1A2B42\]{--tw-gradient-to:#1A2B42 var(--tw-gradient-to-position)}.to-\[\#631823\]{--tw-gradient-to:#631823 var(--tw-gradient-to-position)}.to-\[\#962839\]{--tw-gradient-to:#962839 var(--tw-gradient-to-position)}.to-transparent{--tw-gradient-to:transparent var(--tw-gradient-to-position)}.object-cover{object-fit:cover}.p-2\.5{padding:0.625rem}.p-3\.5{padding:0.875rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-7{padding:1.75rem}.px-0{padding-left:0px;padding-right:0px}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-10{padding-left:2.5rem;padding-right:2.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-7{padding-left:1.75rem;padding-right:1.75rem}.px-8{padding-left:2rem;padding-right:2rem}.py-0{padding-top:0px;padding-bottom:0px}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-12{padding-top:3rem;padding-bottom:3rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-3\.5{padding-top:0.875rem;padding-bottom:0.875rem}.py-5{padding-top:1.25rem;padding-bottom:1.25rem}.py-9{padding-top:2.25rem;padding-bottom:2.25rem}.pb-12{padding-bottom:3rem}.pb-20{padding-bottom:5rem}.pb-3{padding-bottom:0.75rem}.pl-3{padding-left:0.75rem}.pl-6{padding-left:1.5rem}.pr-3{padding-right:0.75rem}.pt-10{padding-top:2.5rem}.pt-11{padding-top:2.75rem}.pt-2{padding-top:0.5rem}.pt-3\.5{padding-top:0.875rem}.pt-5{padding-top:1.25rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.font-editorial{font-family:"Cormorant Garamond", Georgia, serif}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.font-script{font-family:"Dancing Script", cursive}.font-serif{font-family:"Playfair Display", "Cormorant Garamond", Georgia, serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-5xl{font-size:3rem;line-height:1}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[13\.5px\]{font-size:13.5px}.text-\[34px\]{font-size:34px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-light{font-weight:300}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-\[1\.85\]{line-height:1.85}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.leading-tight{line-height:1.25}.tracking-\[0\.14em\]{letter-spacing:0.14em}.tracking-\[0\.18em\]{letter-spacing:0.18em}.tracking-\[0\.24em\]{letter-spacing:0.24em}.tracking-\[0\.25em\]{letter-spacing:0.25em}.tracking-\[0\.26em\]{letter-spacing:0.26em}.tracking-\[0\.28em\]{letter-spacing:0.28em}.tracking-\[0\.2em\]{letter-spacing:0.2em}.tracking-\[0\.3em\]{letter-spacing:0.3em}.tracking-tight{letter-spacing:-0.025em}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-burgundy{--tw-text-opacity:1;color:rgb(122 32 46 / var(--tw-text-opacity, 1))}.text-burgundy\/80{color:rgb(122 32 46 / 0.8)}.text-cream{--tw-text-opacity:1;color:rgb(250 247 242 / var(--tw-text-opacity, 1))}.text-cream\/70{color:rgb(250 247 242 / 0.7)}.text-cream\/75{color:rgb(250 247 242 / 0.75)}.text-cream\/80{color:rgb(250 247 242 / 0.8)}.text-cream\/90{color:rgb(250 247 242 / 0.9)}.text-gold{--tw-text-opacity:1;color:rgb(181 147 91 / var(--tw-text-opacity, 1))}.text-gold\/25{color:rgb(181 147 91 / 0.25)}.text-gold\/90{color:rgb(181 147 91 / 0.9)}.text-ink{--tw-text-opacity:1;color:rgb(44 42 41 / var(--tw-text-opacity, 1))}.text-ink\/80{color:rgb(44 42 41 / 0.8)}.text-ink\/85{color:rgb(44 42 41 / 0.85)}.text-muted{--tw-text-opacity:1;color:rgb(110 102 95 / var(--tw-text-opacity, 1))}.text-muted\/75{color:rgb(110 102 95 / 0.75)}.text-navy{--tw-text-opacity:1;color:rgb(26 43 66 / var(--tw-text-opacity, 1))}.text-navy\/75{color:rgb(26 43 66 / 0.75)}.text-navy\/80{color:rgb(26 43 66 / 0.8)}.text-navy\/85{color:rgb(26 43 66 / 0.85)}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-0{opacity:0}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_24px_70px_rgba\(26\2c 43\2c 66\2c 0\.16\)\]{--tw-shadow:0 24px 70px rgba(26,43,66,0.16);--tw-shadow-colored:0 24px 70px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.ring-2{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.ring-4{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.ring-burgundy\/20{--tw-ring-color:rgb(122 32 46 / 0.2)}.ring-burgundy\/30{--tw-ring-color:rgb(122 32 46 / 0.3)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.selection\:bg-gold\/25 *::selection{background-color:rgb(181 147 91 / 0.25)}.selection\:text-navy *::selection{--tw-text-opacity:1;color:rgb(26 43 66 / var(--tw-text-opacity, 1))}.selection\:bg-gold\/25::selection{background-color:rgb(181 147 91 / 0.25)}.selection\:text-navy::selection{--tw-text-opacity:1;color:rgb(26 43 66 / var(--tw-text-opacity, 1))}.hover\:bg-cream:hover{--tw-bg-opacity:1;background-color:rgb(250 247 242 / var(--tw-bg-opacity, 1))}.hover\:bg-parchment:hover{--tw-bg-opacity:1;background-color:rgb(242 236 225 / var(--tw-bg-opacity, 1))}.hover\:bg-sand:hover{--tw-bg-opacity:1;background-color:rgb(230 220 205 / var(--tw-bg-opacity, 1))}.hover\:bg-white\/20:hover{background-color:rgb(255 255 255 / 0.2)}.hover\:brightness-110:hover{--tw-brightness:brightness(1.1);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-gold:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(181 147 91 / var(--tw-ring-opacity, 1))}.group:hover .group-hover\:translate-x-1{--tw-translate-x:0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@media (min-width: 640px){.sm\:w-\[280px\]{width:280px}.sm\:w-auto{width:auto}.sm\:flex-row{flex-direction:row}.sm\:gap-5{gap:1.25rem}.sm\:rounded-\[32px\]{border-radius:32px}.sm\:border{border-width:1px}.sm\:p-9{padding:2.25rem}.sm\:px-4{padding-left:1rem;padding-right:1rem}.sm\:py-8{padding-top:2rem;padding-bottom:2rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\:text-\[38px\]{font-size:38px}}</style><script type="application/json" id="saved-preset-data">{"guestName":"Bùi Hải Yến bro","gradName":"Vũ Thị Hương Lam","gradMajor":"Khoa Ngôn Ngữ và Văn Hóa Hàn Quốc - ĐHNN, ĐHQG Hà Nội","gradPhone":"0345971055","heroPhoto":"","galleryPhoto":""}</script></head>
+<body class="min-h-screen antialiased selection:bg-gold/25 selection:text-navy">
+
+  <!-- Confetti Canvas for Celebration Effects -->
+  <canvas id="confetti-canvas" width="947" height="827"></canvas>
+
+  <!-- Toast Notification -->
+  <div id="toast" role="status" aria-live="polite" class="fixed top-5 left-1/2 -translate-x-1/2 z-[100] px-5 py-2.5 rounded-full bg-navy/95 text-cream text-xs font-medium tracking-wide shadow-xl border border-gold/40 opacity-0 -translate-y-3 pointer-events-none transition-all duration-300 max-w-[90vw] text-center">
+    <span id="toast-msg">Đã sao chép!</span>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 1. ENVELOPE OPENING OVERLAY (SIGNATURE JMII ENTRANCE)                 -->
+  <!-- ===================================================================== -->
+  <div id="envelope-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-[#18263A]/95 backdrop-blur-sm p-4">
+    <div class="relative w-full max-w-[400px] paper-surface rounded-3xl p-7 sm:p-9 text-center shadow-2xl border border-gold/40 overflow-hidden">
+      <!-- Corner decorative botanical SVG lines -->
+      <svg class="absolute top-0 left-0 w-24 h-24 text-gold/25 pointer-events-none" viewBox="0 0 100 100" fill="none">
+        <path d="M0 0 C 30 15, 15 55, 0 80" stroke="currentColor" stroke-width="1"></path>
+        <path d="M12 0 C 42 20, 26 60, 8 92" stroke="currentColor" stroke-width="0.8"></path>
+        <circle cx="24" cy="24" r="2" fill="currentColor"></circle>
+      </svg>
+      <svg class="absolute bottom-0 right-0 w-24 h-24 text-gold/25 pointer-events-none rotate-180" viewBox="0 0 100 100" fill="none">
+        <path d="M0 0 C 30 15, 15 55, 0 80" stroke="currentColor" stroke-width="1"></path>
+        <path d="M12 0 C 42 20, 26 60, 8 92" stroke="currentColor" stroke-width="0.8"></path>
+        <circle cx="24" cy="24" r="2" fill="currentColor"></circle>
+      </svg>
+
+      <!-- Top Monogram Crest -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full border border-gold/40 bg-parchment/70 text-[10px] tracking-[0.25em] uppercase text-navy font-medium mb-5">
+        <span>ULIS · VNU HANOI</span>
+        <span class="text-gold">•</span>
+        <span>2026</span>
+      </div>
+
+      <!-- Envelope Flap Graphic -->
+      <div class="relative mx-auto w-20 h-20 mb-4 flex items-center justify-center">
+        <svg class="w-full h-full text-navy" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="46" stroke="#B5935B" stroke-width="1" stroke-dasharray="3 3"></circle>
+          <circle cx="50" cy="50" r="39" stroke="#1A2B42" stroke-width="0.8" opacity="0.35"></circle>
+          <!-- Graduation Cap Icon -->
+          <path d="M50 31L22 44L50 57L78 44L50 31Z" fill="#1A2B42"></path>
+          <path d="M32 49.5V62C32 65.5 40 69 50 69C60 69 68 65.5 68 62V49.5L50 58L32 49.5Z" fill="#7A202E" opacity="0.92"></path>
+          <path d="M74 46V61" stroke="#B5935B" stroke-width="2" stroke-linecap="round"></path>
+          <circle cx="74" cy="63" r="2.6" fill="#B5935B"></circle>
+        </svg>
+      </div>
+
+      <p class="font-editorial italic text-muted text-base tracking-wide">Trân trọng kính mời</p>
+
+      <!-- Dynamic Guest Name -->
+      <h2 id="cover-guest-name" class="font-script text-3xl sm:text-4xl text-burgundy mt-1 mb-3 leading-snug break-words">Bùi Hải Yến bro</h2>
+
+      <div class="w-16 h-[1px] bg-gold/60 mx-auto my-4"></div>
+
+      <p class="text-xs uppercase tracking-[0.2em] text-navy/80 font-medium">Lễ Trao Bằng Tốt Nghiệp</p>
+      <p class="font-serif text-lg text-navy font-semibold mt-1" id="cover-grad-name">Vũ Thị Hương Lam</p>
+      <p class="text-xs text-muted mt-1 tracking-widest">04 . 12 . 2026 &nbsp;|&nbsp; HÀ NỘI</p>
+
+      <!-- Wax Seal Open Button -->
+      <div class="mt-7 flex flex-col items-center">
+        <button id="open-invitation-btn" type="button" class="wax-seal group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-br from-burgundy via-[#8E2636] to-[#631823] text-cream font-medium text-sm tracking-[0.14em] uppercase transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-gold cursor-pointer">
+          <span>Mở Thiệp Mời</span>
+          <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+          </svg>
+        </button>
+        <span class="text-[11px] text-muted mt-3 italic">Chạm để mở thiệp mời</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MAIN INVITATION EDITORIAL CONTAINER (JMII MOBILE-FIRST LAYOUT)        -->
+  <!-- ===================================================================== -->
+  <div class="py-0 sm:py-8 px-0 sm:px-4 flex justify-center">
+    <main class="w-full max-w-[460px] paper-surface sm:rounded-[32px] shadow-[0_24px_70px_rgba(26,43,66,0.16)] border-x sm:border border-gold/30 overflow-hidden relative">
+
+      <!-- ================================================================= -->
+      <!-- SECTION 1: HERO COVER                                             -->
+      <!-- ================================================================= -->
+      <section class="relative px-6 pt-10 pb-12 text-center overflow-hidden">
+        <!-- Top Subtle Ornament -->
+        <div class="flex items-center justify-center gap-3 text-[10px] tracking-[0.28em] uppercase text-navy/75 font-medium mb-6 reveal">
+          <span class="w-8 h-[1px] bg-gold/60"></span>
+          <span>ULIS · ĐHQGHN</span>
+          <span class="w-8 h-[1px] bg-gold/60"></span>
+        </div>
+
+        <!-- Main Title (without "Save our date") -->
+        <div class="reveal reveal-delay-1">
+          <h1 class="font-serif text-[34px] sm:text-[38px] text-navy font-semibold tracking-tight leading-tight">
+            Lễ Tốt Nghiệp
+          </h1>
+          <p class="font-editorial italic text-gold text-lg tracking-wide mt-1">
+            Đợt Tháng 9 / 2026
+          </p>
+        </div>
+
+        <!-- Arch Portrait Frame -->
+        <div class="relative mx-auto mt-7 mb-7 w-[260px] sm:w-[280px] reveal reveal-delay-2">
+          <!-- Outer decorative arch border -->
+          <div class="absolute -inset-2.5 arch-frame border border-gold/45 pointer-events-none"></div>
+          <div class="relative arch-frame overflow-hidden bg-gradient-to-b from-[#1E3350] via-[#1A2B42] to-[#111D2D] aspect-[3/4] shadow-xl flex items-center justify-center">
+            <!-- Custom uploaded image (hidden by default until user uploads) -->
+            <img id="hero-custom-img" alt="Ảnh tốt nghiệp Tân Cử Nhân ULIS" class="hidden w-full h-full object-cover">
+            <!-- Default Elegant Illustrated Graduation Crest -->
+            <div id="hero-default-svg" class="w-full h-full flex flex-col items-center justify-between py-9 px-6 text-cream relative">
+              <!-- Soft radial glow -->
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(181,147,91,0.22),transparent_65%)] pointer-events-none"></div>
+
+              <div class="relative z-10 text-center">
+                <p class="text-[10px] uppercase tracking-[0.3em] text-gold/90">Class of 2026</p>
+                <div class="w-10 h-[1px] bg-gold/50 mx-auto mt-2"></div>
+              </div>
+
+              <!-- Laurel & Graduation Cap SVG -->
+              <div class="relative z-10 my-2">
+                <svg class="w-36 h-36 mx-auto" viewBox="0 0 160 160" fill="none">
+                  <circle cx="80" cy="80" r="68" stroke="#B5935B" stroke-width="0.9" stroke-dasharray="3 4" opacity="0.7"></circle>
+                  <circle cx="80" cy="80" r="56" stroke="#FAF7F2" stroke-width="0.7" opacity="0.25"></circle>
+                  <!-- Laurel left -->
+                  <path d="M40 112 C26 92, 26 62, 46 42" stroke="#B5935B" stroke-width="1.3" stroke-linecap="round"></path>
+                  <ellipse cx="33" cy="96" rx="6" ry="3" transform="rotate(-35 33 96)" fill="#B5935B" opacity="0.8"></ellipse>
+                  <ellipse cx="29" cy="80" rx="6" ry="3" transform="rotate(-10 29 80)" fill="#B5935B" opacity="0.8"></ellipse>
+                  <ellipse cx="32" cy="64" rx="6" ry="3" transform="rotate(20 32 64)" fill="#B5935B" opacity="0.8"></ellipse>
+                  <ellipse cx="40" cy="50" rx="5.5" ry="2.8" transform="rotate(42 40 50)" fill="#B5935B" opacity="0.8"></ellipse>
+                  <!-- Laurel right -->
+                  <path d="M120 112 C134 92, 134 62, 114 42" stroke="#B5935B" stroke-width="1.3" stroke-linecap="round"></path>
+                  <ellipse cx="127" cy="96" rx="6" ry="3" transform="rotate(35 127 96)" fill="#B5935B" opacity="0.8"></ellipse>
+                  <ellipse cx="131" cy="80" rx="6" ry="3" transform="rotate(10 131 80)" fill="#B5935B" opacity="0.8"></ellipse>
+                  <ellipse cx="128" cy="64" rx="6" ry="3" transform="rotate(-20 128 64)" fill="#B5935B" opacity="0.8"></ellipse>
+                  <ellipse cx="120" cy="50" rx="5.5" ry="2.8" transform="rotate(-42 120 50)" fill="#B5935B" opacity="0.8"></ellipse>
+                  <!-- Mortarboard Cap -->
+                  <path d="M80 50L44 67L80 84L116 67L80 50Z" fill="#FAF7F2"></path>
+                  <path d="M56 74V92C56 97.5 66.8 103 80 103C93.2 103 104 97.5 104 92V74L80 85.5L56 74Z" fill="#8C2434"></path>
+                  <path d="M111 70V94" stroke="#B5935B" stroke-width="2.4" stroke-linecap="round"></path>
+                  <circle cx="111" cy="97" r="3.6" fill="#B5935B"></circle>
+                  <path d="M108 104L111 97L114 104H108Z" fill="#B5935B"></path>
+                </svg>
+              </div>
+
+              <!-- Graduate Name Badge inside frame -->
+              <div class="relative z-10 text-center w-full border-t border-gold/30 pt-3.5">
+                <p id="hero-badge-name" class="font-serif text-xl text-cream tracking-wide font-medium">Vũ Thị Hương Lam</p>
+                <p id="hero-badge-major" class="text-[11px] text-gold/90 tracking-[0.14em] uppercase mt-1">Khoa Ngôn Ngữ và Văn Hóa Hàn Quốc - ĐHNN, ĐHQG Hà Nội</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero Date Strip -->
+        <div class="reveal reveal-delay-3">
+          <div class="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-parchment/90 border border-gold/35">
+            <span class="text-xs uppercase tracking-[0.2em] text-navy font-medium">Thứ Sáu</span>
+            <span class="w-1 h-1 rounded-full bg-gold"></span>
+            <span class="font-serif text-lg font-semibold text-burgundy tracking-widest">04 · 12 · 2026</span>
+          </div>
+          <p class="text-xs text-muted mt-3 tracking-wide">
+            Hội trường Nguyễn Văn Đạo · 144 Xuân Thủy, Cầu Giấy, Hà Nội
+          </p>
+        </div>
+      </section>
+
+      <!-- Divider -->
+      <div class="px-10">
+        <div class="h-[1px] bg-gradient-to-r from-transparent via-gold/50 to-transparent"></div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 2: LỜI NGỎ (PAGE 2 - WITHOUT TÂN CỬ NHÂN & ĐƠN VỊ ĐÀO TẠO)-->
+      <!-- ================================================================= -->
+      <section class="px-7 py-12 text-center reveal">
+        <p class="font-script text-3xl text-burgundy mb-1">Lời Ngỏ Yêu Thương</p>
+        <p class="text-[11px] uppercase tracking-[0.24em] text-muted mb-6">A Special Chapter Begins</p>
+
+        <div class="bg-parchment/55 rounded-2xl p-6 editorial-border">
+          <p class="text-xs uppercase tracking-[0.18em] text-muted mb-1">Thân gửi</p>
+          <p id="letter-guest-name" class="font-script text-3xl text-navy mb-4 break-words">Bùi Hải Yến bro</p>
+
+          <p class="text-[13.5px] leading-[1.85] text-ink/85 font-light">
+            Bốn năm thanh xuân rực rỡ dưới mái trường <strong class="font-medium text-navy">Đại học Ngoại ngữ – ĐHQGHN (ULIS)</strong> sắp khép lại bằng một dấu mốc thật đáng nhớ. Những ai nhận được tấm thiệp này đều là những người đặc biệt đã luôn đồng hành, sẻ chia và yêu thương mình suốt chặng đường vừa qua.
+          </p>
+
+          <p class="text-[13.5px] leading-[1.85] text-ink/85 font-light mt-3.5">
+            Mình rất mong được đón tiếp bạn đến chung vui, lưu giữ những bức ảnh thật đẹp và cùng chứng kiến khoảnh khắc nhận tấm bằng cử nhân ý nghĩa này!
+          </p>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 3: FORMAL INVITATION CARD (TIME & VENUE)                  -->
+      <!-- ================================================================= -->
+      <section class="px-6 pb-12 reveal">
+        <div class="relative rounded-3xl bg-navy text-cream px-6 py-9 text-center shadow-xl overflow-hidden border border-gold/40">
+          <!-- Soft corner accents -->
+          <div class="absolute top-3 left-3 w-7 h-7 border-t border-l border-gold/50 rounded-tl-xl pointer-events-none"></div>
+          <div class="absolute top-3 right-3 w-7 h-7 border-t border-r border-gold/50 rounded-tr-xl pointer-events-none"></div>
+          <div class="absolute bottom-3 left-3 w-7 h-7 border-b border-l border-gold/50 rounded-bl-xl pointer-events-none"></div>
+          <div class="absolute bottom-3 right-3 w-7 h-7 border-b border-r border-gold/50 rounded-br-xl pointer-events-none"></div>
+
+          <p class="text-[10px] uppercase tracking-[0.28em] text-gold font-medium">Trân Trọng Kính Mời</p>
+          <h2 id="card-guest-name" class="font-script text-3xl text-cream mt-1.5 mb-2 break-words">Bùi Hải Yến bro</h2>
+          <p class="text-xs text-cream/75 font-light">
+            Đến tham dự Lễ Trao Bằng Tốt Nghiệp Đợt T9/2026
+          </p>
+
+          <!-- Date Highlight Block (JMII Typography Style) -->
+          <div class="my-7 py-5 border-y border-gold/30 flex items-center justify-center gap-4">
+            <div class="text-right pr-3 border-r border-gold/30">
+              <p class="text-[10px] uppercase tracking-[0.2em] text-gold">Thời gian</p>
+              <p class="font-serif text-lg font-medium text-cream mt-0.5">08:30 – 10:00</p>
+              <p class="text-[11px] text-cream/70 mt-0.5">Thứ Sáu</p>
+            </div>
+            <div class="px-2">
+              <p class="font-serif text-5xl font-bold text-gold leading-none">04</p>
+              <p class="text-[11px] tracking-[0.2em] uppercase text-cream/90 mt-1">Tháng 12</p>
+            </div>
+            <div class="text-left pl-3 border-l border-gold/30">
+              <p class="text-[10px] uppercase tracking-[0.2em] text-gold">Năm</p>
+              <p class="font-serif text-lg font-medium text-cream mt-0.5">2026</p>
+              <p class="text-[11px] text-cream/70 mt-0.5">SV tập trung 7h00</p>
+            </div>
+          </div>
+
+          <!-- Venue Info -->
+          <div class="space-y-1.5">
+            <p class="text-[10px] uppercase tracking-[0.26em] text-gold">Địa Điểm Tổ Chức</p>
+            <h3 class="font-serif text-lg font-semibold text-cream">
+              Hội trường Nguyễn Văn Đạo – ĐHQGHN
+            </h3>
+            <p class="text-xs text-cream/80 font-light leading-relaxed">
+              144 Xuân Thủy, Cầu Giấy, Hà Nội
+            </p>
+          </div>
+
+          <!-- Action Buttons: Directions & Save to Calendar -->
+          <div class="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a href="https://www.google.com/maps/search/?api=1&amp;query=H%E1%BB%99i+tr%C6%B0%E1%BB%9Dng+Nguy%E1%BB%85n+V%C4%83n+%C4%90%E1%BA%A1o+144+Xu%C3%A2n+Th%E1%BB%A7y+C%E1%BA%A7u+Gi%E1%BA%A5y+H%C3%A0+N%E1%BB%99i" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-gold text-navy font-semibold text-xs uppercase tracking-[0.14em] hover:brightness-110 transition shadow-md">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+              <span>Chỉ Đường</span>
+            </a>
+
+            <button id="add-calendar-btn" type="button" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-white/10 border border-gold/50 text-cream font-medium text-xs uppercase tracking-[0.14em] hover:bg-white/20 transition cursor-pointer">
+              <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <span>Lưu Vào Lịch</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 4: DECEMBER 2026 CALENDAR & LIVE COUNTDOWN                -->
+      <!-- ================================================================= -->
+      <section class="px-6 pb-12 reveal">
+        <div class="bg-parchment/70 rounded-3xl p-6 editorial-border text-center">
+          <div class="flex items-baseline justify-between border-b border-gold/30 pb-3 mb-4">
+            <span class="font-serif text-2xl font-semibold text-navy">December</span>
+            <span class="font-editorial italic text-lg text-gold font-semibold">2026</span>
+          </div>
+
+          <!-- Weekday Headers (Mon - Sun) -->
+          <div class="grid grid-cols-7 gap-1 text-[10px] uppercase tracking-wider text-muted font-medium mb-2">
+            <span>T2</span>
+            <span>T3</span>
+            <span>T4</span>
+            <span>T5</span>
+            <span class="text-burgundy font-semibold">T6</span>
+            <span>T7</span>
+            <span>CN</span>
+          </div>
+
+          <!-- December 2026 Days (Dec 1, 2026 is Tuesday; Dec 4, 2026 is Friday) -->
+          <div class="grid grid-cols-7 gap-y-2 gap-x-1 text-xs text-ink/80 items-center justify-items-center">
+            <span></span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">1</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">2</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">3</span>
+            <!-- Highlighted Graduation Day: Friday Dec 4 -->
+            <span class="relative w-9 h-9 flex items-center justify-center rounded-full bg-burgundy text-cream font-serif font-bold text-sm shadow-md ring-4 ring-burgundy/20">
+              4
+            </span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">5</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">6</span>
+
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">7</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">8</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">9</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">10</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">11</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">12</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">13</span>
+
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">14</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">15</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">16</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">17</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">18</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">19</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">20</span>
+
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">21</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">22</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">23</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">24</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">25</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">26</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">27</span>
+
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">28</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">29</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">30</span>
+            <span class="w-8 h-8 flex items-center justify-center rounded-full">31</span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <!-- Live Countdown -->
+          <div class="mt-6 pt-5 border-t border-gold/30">
+            <p class="font-editorial italic text-muted text-sm mb-3">Đếm ngược tới khoảnh khắc trao bằng</p>
+            <div class="grid grid-cols-4 gap-2">
+              <div class="bg-cream rounded-2xl py-3 px-1 border border-gold/25 shadow-sm">
+                <p id="cd-days" class="font-serif text-2xl font-bold text-navy leading-none">11</p>
+                <p class="text-[10px] uppercase tracking-wider text-muted mt-1.5">Ngày</p>
+              </div>
+              <div class="bg-cream rounded-2xl py-3 px-1 border border-gold/25 shadow-sm">
+                <p id="cd-hours" class="font-serif text-2xl font-bold text-navy leading-none">22</p>
+                <p class="text-[10px] uppercase tracking-wider text-muted mt-1.5">Giờ</p>
+              </div>
+              <div class="bg-cream rounded-2xl py-3 px-1 border border-gold/25 shadow-sm">
+                <p id="cd-mins" class="font-serif text-2xl font-bold text-navy leading-none">57</p>
+                <p class="text-[10px] uppercase tracking-wider text-muted mt-1.5">Phút</p>
+              </div>
+              <div class="bg-cream rounded-2xl py-3 px-1 border border-gold/25 shadow-sm">
+                <p id="cd-secs" class="font-serif text-2xl font-bold text-burgundy leading-none">44</p>
+                <p class="text-[10px] uppercase tracking-wider text-muted mt-1.5">Giây</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 5: EVENT TIMELINE                                         -->
+      <!-- ================================================================= -->
+      <section class="px-7 pb-12 reveal">
+        <div class="text-center mb-7">
+          <p class="font-script text-3xl text-burgundy">Lịch Trình Buổi Lễ</p>
+          <p class="text-[11px] uppercase tracking-[0.24em] text-muted mt-1">Event Timeline · 04.12.2026</p>
+        </div>
+
+        <div class="relative pl-6 border-l border-gold/50 space-y-6 ml-3">
+          <!-- Item 1 -->
+          <div class="relative">
+            <span class="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-cream border-2 border-gold shadow-sm"></span>
+            <div class="bg-parchment/60 rounded-2xl p-4 editorial-border">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-semibold tracking-widest text-burgundy uppercase">07:00</span>
+                <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-navy/10 text-navy font-medium">Tập trung</span>
+              </div>
+              <h4 class="font-serif text-base font-semibold text-navy mt-1">Tập Trung Sinh Viên &amp; Đón Khách</h4>
+              <p class="text-xs text-muted mt-1 leading-relaxed">
+                Sinh viên có mặt ổn định trang phục lễ phục cử nhân, check-in tại sảnh Hội trường Nguyễn Văn Đạo.
+              </p>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="relative">
+            <span class="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-burgundy border-2 border-cream shadow-md ring-2 ring-burgundy/30"></span>
+            <div class="bg-parchment/85 rounded-2xl p-4 border border-gold/45 shadow-sm">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-semibold tracking-widest text-burgundy uppercase">08:30 – 10:00</span>
+                <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-burgundy/10 text-burgundy font-medium">Lễ chính</span>
+              </div>
+              <h4 class="font-serif text-base font-semibold text-navy mt-1">Lễ Trao Bằng Tốt Nghiệp</h4>
+              <p class="text-xs text-muted mt-1 leading-relaxed">
+                Nghi thức chào cờ, phát biểu chúc mừng và trao bằng cử nhân trang trọng cho các Tân Cử Nhân ULIS.
+              </p>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="relative">
+            <span class="absolute -left-[31px] top-1.5 w-3.5 h-3.5 rounded-full bg-cream border-2 border-gold shadow-sm"></span>
+            <div class="bg-parchment/60 rounded-2xl p-4 editorial-border">
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-xs font-semibold tracking-widest text-burgundy uppercase">Từ 10:00</span>
+                <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-gold/20 text-navy font-medium">Lưu niệm</span>
+              </div>
+              <h4 class="font-serif text-base font-semibold text-navy mt-1">Chụp Ảnh &amp; Chung Vui Cùng Gia Đình, Bạn Bè</h4>
+              <p class="text-xs text-muted mt-1 leading-relaxed">
+                Gặp gỡ, chụp ảnh kỷ niệm tại khuôn viên Hội trường Nguyễn Văn Đạo &amp; sân trường ULIS. Nếu tới nơi chưa thấy mình, cứ gọi số <strong id="note-phone-display" class="text-navy font-medium">0345971055</strong> nhé!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 6: DRESSCODE SUGGESTION                                   -->
+      <!-- ================================================================= -->
+      <section class="px-6 pb-12 reveal">
+        <div class="bg-parchment/60 rounded-3xl p-6 text-center editorial-border">
+          <p class="font-script text-3xl text-burgundy">Dresscode</p>
+          <p class="text-xs text-muted mt-1 mb-5">Gợi ý sắc màu thanh lịch để khung hình thêm đồng điệu</p>
+
+          <div class="flex items-center justify-center gap-4 sm:gap-5">
+            <div class="flex flex-col items-center gap-1.5">
+              <span class="w-10 h-10 rounded-full bg-[#FAF7F2] border border-gold/50 shadow-inner"></span>
+              <span class="text-[10px] uppercase tracking-wider text-muted">Kem</span>
+            </div>
+            <div class="flex flex-col items-center gap-1.5">
+              <span class="w-10 h-10 rounded-full bg-[#D8C7B0] border border-white shadow-sm"></span>
+              <span class="text-[10px] uppercase tracking-wider text-muted">Be</span>
+            </div>
+            <div class="flex flex-col items-center gap-1.5">
+              <span class="w-10 h-10 rounded-full bg-[#1A2B42] border border-white shadow-sm"></span>
+              <span class="text-[10px] uppercase tracking-wider text-muted">Navy</span>
+            </div>
+            <div class="flex flex-col items-center gap-1.5">
+              <span class="w-10 h-10 rounded-full bg-[#7A202E] border border-white shadow-sm"></span>
+              <span class="text-[10px] uppercase tracking-wider text-muted">Đỏ rượu</span>
+            </div>
+            <div class="flex flex-col items-center gap-1.5">
+              <span class="w-10 h-10 rounded-full bg-[#2C2A29] border border-white shadow-sm"></span>
+              <span class="text-[10px] uppercase tracking-wider text-muted">Đen</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 7: OUR MEMORIES GALLERY                                   -->
+      <!-- ================================================================= -->
+      <section class="px-6 pb-12 reveal">
+        <div class="text-center mb-6">
+          <p class="font-script text-3xl text-burgundy">Our Memories</p>
+          <p class="text-[11px] uppercase tracking-[0.24em] text-muted mt-1">Thanh Xuân Tại ULIS</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Featured tall memory card -->
+          <div class="col-span-2 relative rounded-2xl overflow-hidden bg-gradient-to-br from-navy via-[#243B5A] to-[#1A2B42] aspect-[16/10] border border-gold/35 shadow-md flex items-center justify-center">
+            <img id="gallery-img-1" alt="Kỷ niệm ULIS 1" class="hidden w-full h-full object-cover">
+            <div id="gallery-svg-1" class="text-center p-6 text-cream">
+              <p class="font-editorial italic text-gold text-base">“Bốn mùa đi qua, kỷ niệm ở lại”</p>
+              <p class="font-serif text-xl font-medium mt-1.5">ULIS · 144 Xuân Thủy</p>
+              <p class="text-[11px] text-cream/70 mt-2">Bạn có thể tải ảnh kỷ yếu lên ở nút “Tạo link &amp; Sửa thiệp”</p>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="relative rounded-2xl overflow-hidden bg-parchment aspect-square border border-gold/30 flex flex-col items-center justify-center p-4 text-center">
+            <svg class="w-9 h-9 text-burgundy/80 mb-2" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path>
+            </svg>
+            <p class="font-serif text-sm font-semibold text-navy">New Chapter</p>
+            <p class="text-[11px] text-muted mt-0.5">04 . 12 . 2026</p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="relative rounded-2xl overflow-hidden bg-parchment aspect-square border border-gold/30 flex flex-col items-center justify-center p-4 text-center">
+            <svg class="w-9 h-9 text-gold mb-2" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <p class="font-serif text-sm font-semibold text-navy">See You There</p>
+            <p class="text-[11px] text-muted mt-0.5">Hội trường NVĐ</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Divider before Footer -->
+      <div class="px-10">
+        <div class="h-[1px] bg-gradient-to-r from-transparent via-gold/50 to-transparent"></div>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- SECTION 8: THANK YOU FOOTER                                       -->
+      <!-- ================================================================= -->
+      <footer class="px-7 pt-11 pb-20 text-center reveal">
+        <p class="font-script text-4xl text-burgundy">Thank You!</p>
+        <p class="font-editorial italic text-navy/85 text-base mt-2 max-w-[300px] mx-auto leading-relaxed">
+          Sự hiện diện của bạn là món quà quý giá nhất trong ngày lễ tốt nghiệp của mình.
+        </p>
+
+        <div class="inline-flex items-center gap-3 mt-6 text-[11px] tracking-[0.25em] uppercase text-muted">
+          <span>04</span>
+          <span class="text-gold">•</span>
+          <span>12</span>
+          <span class="text-gold">•</span>
+          <span>2026</span>
+        </div>
+
+        <p class="text-[10px] text-muted/75 mt-5 tracking-wider uppercase">
+          ULIS – VNU Hanoi · Graduation Day
+        </p>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- FLOATING UTILITY BAR (HOST CUSTOMIZE / LINK GENERATOR)                -->
+  <!-- ===================================================================== -->
+  <div class="fixed bottom-4 right-4 z-40 flex items-center gap-2.5">
+    <button id="open-customize-btn" type="button" title="Tùy chỉnh thiệp &amp; Tạo link mời riêng" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-full bg-white/95 backdrop-blur border border-gold/50 text-navy text-xs font-medium shadow-lg hover:bg-parchment transition cursor-pointer">
+      <svg class="w-4 h-4 text-burgundy" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+      </svg>
+      <span>Tạo link &amp; Sửa thiệp</span>
+    </button>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL: CUSTOMIZE INVITATION & PERSONALIZED GUEST LINK GENERATOR       -->
+  <!-- ===================================================================== -->
+  <div id="customize-modal" class="fixed inset-0 z-50 items-center justify-center bg-navy/70 backdrop-blur-sm p-4 overflow-y-auto hidden">
+    <div class="relative w-full max-w-md bg-cream rounded-3xl p-6 shadow-2xl border border-gold/40 my-auto max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-gold/30 pb-3 mb-4">
+        <div>
+          <h3 class="font-serif text-lg font-semibold text-navy">Tùy Chỉnh &amp; Tạo Link Mời</h3>
+          <p class="text-[11px] text-muted">Cá nhân hóa tên từng khách mời kiểu JMII (?name=...)</p>
+        </div>
+        <button id="close-customize-btn" type="button" aria-label="Đóng" class="w-8 h-8 rounded-full bg-parchment text-navy flex items-center justify-center hover:bg-sand transition cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <div class="space-y-4 text-left">
+        <!-- Guest Name & Link Generator -->
+        <div class="bg-parchment/80 rounded-2xl p-4 border border-gold/35">
+          <label for="input-guest-name" class="block text-xs font-semibold text-navy mb-1.5">
+            Tên khách mời (hiển thị trên thiệp)
+          </label>
+          <input id="input-guest-name" type="text" placeholder="VD: Bạn Lam cùng người thương" class="w-full px-3.5 py-2.5 rounded-xl bg-white border border-gold/40 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-gold">
+
+          <div class="mt-3">
+            <p class="text-[10px] uppercase tracking-wider text-muted mb-1">Link mời riêng cho khách này:</p>
+            <div id="generated-link-preview" class="p-2.5 rounded-xl bg-white/90 border border-gold/25 text-[11px] text-navy break-all font-mono">blob:https://5ub08v0faho4yns05sp16s24ckys2gozyo9jv94m8occe8a26q-h1023759661.scf.usercontent.goog/c0c4b0bc-4bca-4ad6-ae51-8ee9eec56da4?name=B%C3%B9i+H%E1%BA%A3i+Y%E1%BA%BFn+bro&amp;grad=V%C5%A9+Th%E1%BB%8B+H%C6%B0%C6%A1ng+Lam&amp;major=Khoa+Ng%C3%B4n+Ng%E1%BB%AF+v%C3%A0+V%C4%83n+H%C3%B3a+H%C3%A0n+Qu%E1%BB%91c+-+%C4%90HNN%2C+%C4%90HQG+H%C3%A0+N%E1%BB%99i</div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mt-3">
+            <button id="apply-guest-preview-btn" type="button" class="px-3 py-2 rounded-xl bg-white border border-navy/20 text-navy text-xs font-medium hover:bg-cream transition cursor-pointer">
+              Xem thử tên này
+            </button>
+            <button id="copy-guest-link-btn" type="button" class="px-3 py-2 rounded-xl bg-burgundy text-cream text-xs font-medium hover:brightness-110 transition cursor-pointer">
+              Copy link mời
+            </button>
+          </div>
+        </div>
+
+        <!-- Graduate Info -->
+        <div class="space-y-3">
+          <div>
+            <label for="input-grad-name" class="block text-xs font-medium text-navy mb-1">Họ tên Tân Cử Nhân</label>
+            <input id="input-grad-name" type="text" class="w-full px-3.5 py-2 rounded-xl bg-white border border-gold/35 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-gold">
+          </div>
+
+          <div>
+            <label for="input-grad-major" class="block text-xs font-medium text-navy mb-1">Khoa / Khóa (hiện dưới ảnh bìa)</label>
+            <input id="input-grad-major" type="text" class="w-full px-3.5 py-2 rounded-xl bg-white border border-gold/35 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-gold">
+          </div>
+
+          <div>
+            <label for="input-grad-phone" class="block text-xs font-medium text-navy mb-1">Số điện thoại liên hệ trong lịch trình</label>
+            <input id="input-grad-phone" type="text" class="w-full px-3.5 py-2 rounded-xl bg-white border border-gold/35 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-gold">
+          </div>
+        </div>
+
+        <!-- Photo Uploads (Local Preview) -->
+        <div class="bg-parchment/55 rounded-2xl p-3.5 border border-gold/25 space-y-2.5">
+          <p class="text-xs font-semibold text-navy">Thay ảnh kỷ yếu (xem trước ngay)</p>
+          <div class="flex flex-col gap-2">
+            <label class="flex items-center justify-between px-3 py-2 rounded-xl bg-white border border-dashed border-gold/60 text-xs text-navy cursor-pointer hover:bg-cream">
+              <span>Chọn ảnh bìa chính</span>
+              <span class="text-[11px] text-burgundy font-medium">Tải ảnh</span>
+              <input id="upload-hero-photo" type="file" accept="image/*" class="hidden">
+            </label>
+            <label class="flex items-center justify-between px-3 py-2 rounded-xl bg-white border border-dashed border-gold/60 text-xs text-navy cursor-pointer hover:bg-cream">
+              <span>Chọn ảnh mục Our Memories</span>
+              <span class="text-[11px] text-burgundy font-medium">Tải ảnh</span>
+              <input id="upload-gallery-1" type="file" accept="image/*" class="hidden">
+            </label>
+          </div>
+        </div>
+
+        <!-- Save Button -->
+        <button id="save-customize-btn" type="button" class="w-full py-3 rounded-full bg-navy text-cream text-xs uppercase tracking-[0.18em] font-semibold hover:brightness-110 transition shadow-md cursor-pointer">
+          Lưu Thay Đổi Xem Trước
+        </button>
+
+        <!-- Export Standalone Website File -->
+        <div class="pt-2 border-t border-gold/30 space-y-2">
+          <button id="export-html-btn" type="button" class="w-full py-3 rounded-full bg-gradient-to-r from-burgundy to-[#962839] text-cream text-xs uppercase tracking-[0.14em] font-semibold hover:brightness-110 transition shadow-md flex items-center justify-center gap-2 cursor-pointer">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            <span>Tải file index.html để tạo link web</span>
+          </button>
+          <p class="text-[11px] text-muted leading-relaxed text-center">
+            Tải file <strong class="text-navy">index.html</strong> (đã lưu sẵn tên, SĐT &amp; ảnh của bạn), sau đó kéo thả lên <strong class="text-navy">app.netlify.com/drop</strong> để có ngay đường link web miễn phí. Khi gửi link có <code class="text-burgundy">?name=...</code>, nút sửa thiệp sẽ tự động ẩn với khách mời!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT LOGIC: URL PARAMS, COUNTDOWN, ICS, CONFETTI                -->
+  <!-- ===================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      // =====================================================================
+      // 1. STATE & INITIAL CONFIGURATION (READ PRESET & URL ?name=... LIKE JMII)
+      // =====================================================================
+      const DEFAULT_CONFIG = {
+        guestName: 'Bạn cùng người thương',
+        gradName: 'Nguyễn Minh Anh',
+        gradMajor: 'Tân Cử Nhân ULIS · K56',
+        gradPhone: '0912 345 678',
+      };
+
+      let appConfig = { ...DEFAULT_CONFIG };
+      let uploadedHeroDataUrl = '';
+      let uploadedGalleryDataUrl = '';
+
+      /**
+       * Apply a saved image data URL to an image slot and hide its SVG fallback.
+       */
+      function applyPhotoPreview(imgId, fallbackId, dataUrl) {
+        if (!dataUrl) return;
+        const img = document.getElementById(imgId);
+        const fallback = document.getElementById(fallbackId);
+        if (!img) return;
+        img.src = dataUrl;
+        img.classList.remove('hidden');
+        if (fallback) fallback.classList.add('hidden');
+      }
+
+      /**
+       * Resize and compress user-uploaded photos so exported HTML stays lightweight.
+       */
+      function compressImageFile(file, maxDimension) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onerror = () => reject(new Error('File read error'));
+          reader.onload = () => {
+            const image = new Image();
+            image.onerror = () => reject(new Error('Image decode error'));
+            image.onload = () => {
+              const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
+              const width = Math.max(1, Math.round(image.width * scale));
+              const height = Math.max(1, Math.round(image.height * scale));
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              if (!ctx) {
+                resolve(reader.result);
+                return;
+              }
+              ctx.drawImage(image, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.82));
+            };
+            image.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      /**
+       * Load embedded preset data (from exported HTML) and URL parameters.
+       * Supports ?name=Bạn+Lam+cùng+người+thương exactly like JMII invitations.
+       */
+      function loadConfiguration() {
+        try {
+          const presetEl = document.getElementById('saved-preset-data');
+          if (presetEl && presetEl.textContent.trim()) {
+            const preset = JSON.parse(presetEl.textContent);
+            if (preset.guestName) appConfig.guestName = preset.guestName;
+            if (preset.gradName) appConfig.gradName = preset.gradName;
+            if (preset.gradMajor) appConfig.gradMajor = preset.gradMajor;
+            if (preset.gradPhone) appConfig.gradPhone = preset.gradPhone;
+            if (preset.heroPhoto) {
+              uploadedHeroDataUrl = preset.heroPhoto;
+              applyPhotoPreview('hero-custom-img', 'hero-default-svg', uploadedHeroDataUrl);
+            }
+            if (preset.galleryPhoto) {
+              uploadedGalleryDataUrl = preset.galleryPhoto;
+              applyPhotoPreview('gallery-img-1', 'gallery-svg-1', uploadedGalleryDataUrl);
+            }
+          }
+        } catch (err) {
+          console.warn('Could not read saved preset:', err);
+        }
+
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const urlName = params.get('name');
+          const urlGrad = params.get('grad');
+          const urlMajor = params.get('major');
+          const urlPhone = params.get('phone');
+          const forceEdit = params.get('edit');
+
+          if (urlName && urlName.trim()) {
+            appConfig.guestName = urlName.trim();
+            // Hide host edit button automatically when opened as a guest link
+            if (forceEdit !== '1') {
+              const editBtn = document.getElementById('open-customize-btn');
+              if (editBtn) editBtn.classList.add('hidden');
+            }
+          }
+          if (urlGrad && urlGrad.trim()) appConfig.gradName = urlGrad.trim();
+          if (urlMajor && urlMajor.trim()) appConfig.gradMajor = urlMajor.trim();
+          if (urlPhone && urlPhone.trim()) appConfig.gradPhone = urlPhone.trim();
+        } catch (err) {
+          console.warn('Could not parse URL params:', err);
+        }
+      }
+
+      /**
+       * Apply current configuration to all UI elements across the invitation.
+       */
+      function renderConfiguration() {
+        const setText = (id, text) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = text;
+        };
+
+        // Guest Name placements
+        setText('cover-guest-name', appConfig.guestName);
+        setText('letter-guest-name', appConfig.guestName);
+        setText('card-guest-name', appConfig.guestName);
+
+        // Graduate Name & Info placements
+        setText('cover-grad-name', appConfig.gradName);
+        setText('hero-badge-name', appConfig.gradName);
+        setText('hero-badge-major', appConfig.gradMajor);
+        setText('note-phone-display', appConfig.gradPhone);
+
+        // Sync inputs in customize modal
+        const guestInput = document.getElementById('input-guest-name');
+        const gradInput = document.getElementById('input-grad-name');
+        const majorInput = document.getElementById('input-grad-major');
+        const phoneInput = document.getElementById('input-grad-phone');
+
+        if (guestInput) guestInput.value = appConfig.guestName;
+        if (gradInput) gradInput.value = appConfig.gradName;
+        if (majorInput) majorInput.value = appConfig.gradMajor;
+        if (phoneInput) phoneInput.value = appConfig.gradPhone;
+
+        updateGeneratedLinkPreview();
+      }
+
+      /**
+       * Build a shareable JMII-style personalized link using ?name=...
+       */
+      function buildPersonalizedLink(guestNameValue) {
+        try {
+          const baseUrl = window.location.href.split('?')[0].split('#')[0];
+          const params = new URLSearchParams();
+          if (guestNameValue && guestNameValue.trim()) {
+            params.set('name', guestNameValue.trim());
+          }
+          if (appConfig.gradName !== DEFAULT_CONFIG.gradName) {
+            params.set('grad', appConfig.gradName);
+          }
+          if (appConfig.gradMajor !== DEFAULT_CONFIG.gradMajor) {
+            params.set('major', appConfig.gradMajor);
+          }
+          const query = params.toString();
+          return query ? `${baseUrl}?${query}` : baseUrl;
+        } catch (err) {
+          return `?name=${encodeURIComponent(guestNameValue || appConfig.guestName)}`;
+        }
+      }
+
+      function updateGeneratedLinkPreview() {
+        const previewEl = document.getElementById('generated-link-preview');
+        const guestInput = document.getElementById('input-guest-name');
+        if (previewEl && guestInput) {
+          previewEl.textContent = buildPersonalizedLink(guestInput.value || appConfig.guestName);
+        }
+      }
+
+      // =====================================================================
+      // 2. TOAST & SAFE CLIPBOARD COPY (execCommand for iframe reliability)
+      // =====================================================================
+      let toastTimer = null;
+      function showToast(message) {
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-msg');
+        if (!toast || !toastMsg) return;
+
+        toastMsg.textContent = message;
+        toast.classList.remove('opacity-0', '-translate-y-3');
+        toast.classList.add('opacity-100', 'translate-y-0');
+
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+          toast.classList.add('opacity-0', '-translate-y-3');
+          toast.classList.remove('opacity-100', 'translate-y-0');
+        }, 2600);
+      }
+
+      function copyToClipboard(text, successMsg) {
+        try {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          textarea.setAttribute('readonly', '');
+          textarea.style.position = 'fixed';
+          textarea.style.top = '-9999px';
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          showToast(successMsg || 'Đã sao chép!');
+        } catch (err) {
+          showToast('Không thể sao chép tự động, bạn hãy bôi đen và copy nhé!');
+        }
+      }
+
+      // =====================================================================
+      // 3. CONFETTI CELEBRATION ENGINE (RESPONSIVE CANVAS)
+      // =====================================================================
+      let confettiParticles = [];
+      let confettiAnimId = null;
+
+      function resizeConfettiCanvas() {
+        const canvas = document.getElementById('confetti-canvas');
+        if (!canvas) return;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function launchConfetti(count) {
+        const canvas = document.getElementById('confetti-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        resizeConfettiCanvas();
+
+        const colors = ['#B5935B', '#7A202E', '#1A2B42', '#E6DCCD', '#D4AF37'];
+        const total = count || 45;
+
+        for (let i = 0; i < total; i++) {
+          confettiParticles.push({
+            x: Math.random() * canvas.width,
+            y: -10 - Math.random() * canvas.height * 0.35,
+            size: 5 + Math.random() * 6,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            speedY: 1.8 + Math.random() * 2.6,
+            speedX: (Math.random() - 0.5) * 1.8,
+            angle: Math.random() * Math.PI * 2,
+            spin: (Math.random() - 0.5) * 0.14,
+            opacity: 0.95,
+          });
+        }
+
+        if (!confettiAnimId) {
+          animateConfetti(canvas, ctx);
+        }
+      }
+
+      function animateConfetti(canvas, ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        confettiParticles = confettiParticles.filter((p) => {
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.angle += p.spin;
+          if (p.y > canvas.height * 0.78) {
+            p.opacity -= 0.02;
+          }
+
+          if (p.opacity <= 0 || p.y > canvas.height + 20) {
+            return false;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.opacity);
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.angle);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.6);
+          ctx.restore();
+          return true;
+        });
+
+        if (confettiParticles.length > 0) {
+          confettiAnimId = requestAnimationFrame(() => animateConfetti(canvas, ctx));
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          confettiAnimId = null;
+        }
+      }
+
+      // =====================================================================
+      // 4. ENVELOPE OPENING & SCROLL REVEAL
+      // =====================================================================
+      function initEnvelope() {
+        const overlay = document.getElementById('envelope-overlay');
+        const openBtn = document.getElementById('open-invitation-btn');
+        if (!overlay || !openBtn) return;
+
+        openBtn.addEventListener('click', () => {
+          overlay.classList.add('opened');
+          launchConfetti(48);
+        });
+      }
+
+      function initScrollReveal() {
+        const elements = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window)) {
+          elements.forEach((el) => el.classList.add('visible'));
+          return;
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.12 }
+        );
+
+        elements.forEach((el) => observer.observe(el));
+      }
+
+      // =====================================================================
+      // 5. LIVE COUNTDOWN TO 08:30, 04 DEC 2026 (GMT+7)
+      // =====================================================================
+      function initCountdown() {
+        const targetTime = new Date('2026-12-04T08:30:00+07:00').getTime();
+
+        const daysEl = document.getElementById('cd-days');
+        const hoursEl = document.getElementById('cd-hours');
+        const minsEl = document.getElementById('cd-mins');
+        const secsEl = document.getElementById('cd-secs');
+
+        const pad = (n) => String(Math.max(0, n)).padStart(2, '0');
+
+        function updateTimer() {
+          const now = Date.now();
+          const diff = targetTime - now;
+
+          if (diff <= 0) {
+            if (daysEl) daysEl.textContent = '00';
+            if (hoursEl) hoursEl.textContent = '00';
+            if (minsEl) minsEl.textContent = '00';
+            if (secsEl) secsEl.textContent = '00';
+            return;
+          }
+
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+          const mins = Math.floor((diff / (1000 * 60)) % 60);
+          const secs = Math.floor((diff / 1000) % 60);
+
+          if (daysEl) daysEl.textContent = pad(days);
+          if (hoursEl) hoursEl.textContent = pad(hours);
+          if (minsEl) minsEl.textContent = pad(mins);
+          if (secsEl) secsEl.textContent = pad(secs);
+        }
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
+      }
+
+      // =====================================================================
+      // 6. DOWNLOAD CALENDAR EVENT (.ICS FILE)
+      // =====================================================================
+      function downloadCalendarFile() {
+        try {
+          const icsContent = [
+            'BEGIN:VCALENDAR',
+            'VERSION:2.0',
+            'PRODID:-//ULIS Graduation 2026//VN',
+            'CALSCALE:GREGORIAN',
+            'BEGIN:VEVENT',
+            'DTSTART:20261204T013000Z',
+            'DTEND:20261204T033000Z',
+            `SUMMARY:Lễ Trao Bằng Tốt Nghiệp ULIS - ${appConfig.gradName}`,
+            'LOCATION:Hội trường Nguyễn Văn Đạo - ĐHQGHN, 144 Xuân Thủy, Cầu Giấy, Hà Nội',
+            'DESCRIPTION:Lễ trao bằng tốt nghiệp đợt T9/2026 (08:30 - 10:00). Sinh viên tập trung lúc 07:00.',
+            'END:VEVENT',
+            'END:VCALENDAR',
+          ].join('\r\n');
+
+          const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'Le-Tot-Nghiep-ULIS-04-12-2026.ics';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+          showToast('Đã tải tệp lịch (.ics) thành công!');
+        } catch (err) {
+          showToast('Không thể tạo tệp lịch trên trình duyệt này.');
+        }
+      }
+
+      // =====================================================================
+      // 7. MODALS, CUSTOMIZE PANEL & PHOTO PREVIEW UPLOAD
+      // =====================================================================
+      function initModalsAndActions() {
+        // Add to Calendar (.ics)
+        const calBtn = document.getElementById('add-calendar-btn');
+        if (calBtn) calBtn.addEventListener('click', downloadCalendarFile);
+
+        // Customize Modal
+        const customModal = document.getElementById('customize-modal');
+        const openCustomBtn = document.getElementById('open-customize-btn');
+        const closeCustomBtn = document.getElementById('close-customize-btn');
+        const saveCustomBtn = document.getElementById('save-customize-btn');
+        const guestInput = document.getElementById('input-guest-name');
+        const applyPreviewBtn = document.getElementById('apply-guest-preview-btn');
+        const copyLinkBtn = document.getElementById('copy-guest-link-btn');
+
+        const closeCustom = () => {
+          if (!customModal) return;
+          customModal.classList.add('hidden');
+          customModal.classList.remove('flex');
+        };
+
+        if (openCustomBtn && customModal) {
+          openCustomBtn.addEventListener('click', () => {
+            updateGeneratedLinkPreview();
+            customModal.classList.remove('hidden');
+            customModal.classList.add('flex');
+          });
+        }
+        if (closeCustomBtn) closeCustomBtn.addEventListener('click', closeCustom);
+
+        if (guestInput) {
+          guestInput.addEventListener('input', updateGeneratedLinkPreview);
+        }
+
+        if (applyPreviewBtn) {
+          applyPreviewBtn.addEventListener('click', () => {
+            const val = guestInput ? guestInput.value.trim() : '';
+            appConfig.guestName = val || DEFAULT_CONFIG.guestName;
+            renderConfiguration();
+            showToast(`Đang xem thiệp của: ${appConfig.guestName}`);
+          });
+        }
+
+        if (copyLinkBtn) {
+          copyLinkBtn.addEventListener('click', () => {
+            const val = guestInput ? guestInput.value.trim() : '';
+            const link = buildPersonalizedLink(val || appConfig.guestName);
+            copyToClipboard(link, 'Đã copy link mời cá nhân hóa!');
+          });
+        }
+
+        if (saveCustomBtn) {
+          saveCustomBtn.addEventListener('click', () => {
+            syncConfigFromInputs();
+            renderConfiguration();
+            closeCustom();
+            showToast('Đã cập nhật thông tin thiệp mời!');
+          });
+        }
+
+        const exportHtmlBtn = document.getElementById('export-html-btn');
+        if (exportHtmlBtn) {
+          exportHtmlBtn.addEventListener('click', () => {
+            syncConfigFromInputs();
+            renderConfiguration();
+            exportStandaloneWebsite();
+          });
+        }
+
+        function syncConfigFromInputs() {
+          const gName = document.getElementById('input-grad-name');
+          const gMajor = document.getElementById('input-grad-major');
+          const gPhone = document.getElementById('input-grad-phone');
+
+          appConfig.guestName = (guestInput && guestInput.value.trim()) || DEFAULT_CONFIG.guestName;
+          appConfig.gradName = (gName && gName.value.trim()) || DEFAULT_CONFIG.gradName;
+          appConfig.gradMajor = (gMajor && gMajor.value.trim()) || DEFAULT_CONFIG.gradMajor;
+          appConfig.gradPhone = (gPhone && gPhone.value.trim()) || DEFAULT_CONFIG.gradPhone;
+        }
+
+        /**
+         * Export a clean, self-contained index.html with all user edits and photos baked in.
+         */
+        function exportStandaloneWebsite() {
+          try {
+            const clone = document.documentElement.cloneNode(true);
+
+            // Reset transient interactive UI states for guests
+            const clonedOverlay = clone.querySelector('#envelope-overlay');
+            if (clonedOverlay) clonedOverlay.classList.remove('opened');
+
+            const clonedModal = clone.querySelector('#customize-modal');
+            if (clonedModal) {
+              clonedModal.classList.add('hidden');
+              clonedModal.classList.remove('flex');
+            }
+
+            const clonedToast = clone.querySelector('#toast');
+            if (clonedToast) {
+              clonedToast.classList.add('opacity-0', '-translate-y-3');
+              clonedToast.classList.remove('opacity-100', 'translate-y-0');
+            }
+
+            const clonedEditBtn = clone.querySelector('#open-customize-btn');
+            if (clonedEditBtn) clonedEditBtn.classList.remove('hidden');
+
+            clone.querySelectorAll('.reveal').forEach((el) => el.classList.remove('visible'));
+
+            // Clear any ephemeral blob URLs on cloned images (data URLs are restored from preset)
+            ['#hero-custom-img', '#gallery-img-1'].forEach((selector) => {
+              const imgEl = clone.querySelector(selector);
+              if (imgEl && imgEl.getAttribute('src') && imgEl.getAttribute('src').startsWith('blob:')) {
+                imgEl.removeAttribute('src');
+              }
+            });
+
+            // Embed saved configuration + compressed photos into a JSON script tag
+            const oldPreset = clone.querySelector('#saved-preset-data');
+            if (oldPreset) oldPreset.remove();
+
+            const presetPayload = {
+              guestName: appConfig.guestName,
+              gradName: appConfig.gradName,
+              gradMajor: appConfig.gradMajor,
+              gradPhone: appConfig.gradPhone,
+              heroPhoto: uploadedHeroDataUrl,
+              galleryPhoto: uploadedGalleryDataUrl,
+            };
+
+            const presetScript = document.createElement('script');
+            presetScript.type = 'application/json';
+            presetScript.id = 'saved-preset-data';
+            presetScript.textContent = JSON.stringify(presetPayload).replace(/<\/script/gi, '<\\/script');
+
+            const clonedHead = clone.querySelector('head');
+            if (clonedHead) clonedHead.appendChild(presetScript);
+
+            const htmlOutput = '<!DOCTYPE html>\n' + clone.outerHTML;
+            const blob = new Blob([htmlOutput], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'index.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            showToast('Đã tải file index.html! Hãy kéo thả lên app.netlify.com/drop để lấy link.');
+          } catch (err) {
+            console.error('Export failed:', err);
+            showToast('Không thể xuất file tự động trên trình duyệt này.');
+          }
+        }
+
+        // Photo preview uploaders (compressed into persistent Data URLs for export)
+        const bindPhotoUpload = (inputId, imgId, fallbackId, onLoaded) => {
+          const input = document.getElementById(inputId);
+          if (!input) return;
+
+          input.addEventListener('change', async (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            try {
+              const dataUrl = await compressImageFile(file, 1200);
+              onLoaded(dataUrl);
+              applyPhotoPreview(imgId, fallbackId, dataUrl);
+              showToast('Đã cập nhật ảnh thành công!');
+            } catch (err) {
+              const objectUrl = URL.createObjectURL(file);
+              applyPhotoPreview(imgId, fallbackId, objectUrl);
+              showToast('Đã thay ảnh xem trước!');
+            }
+          });
+        };
+
+        bindPhotoUpload('upload-hero-photo', 'hero-custom-img', 'hero-default-svg', (url) => {
+          uploadedHeroDataUrl = url;
+        });
+        bindPhotoUpload('upload-gallery-1', 'gallery-img-1', 'gallery-svg-1', (url) => {
+          uploadedGalleryDataUrl = url;
+        });
+
+        // Close modal on backdrop click
+        if (customModal) {
+          customModal.addEventListener('click', (e) => {
+            if (e.target === customModal) {
+              closeCustom();
+            }
+          });
+        }
+      }
+
+      // =====================================================================
+      // 8. INITIALIZE ON WINDOW LOAD
+      // =====================================================================
+      window.addEventListener('resize', resizeConfettiCanvas);
+
+      window.onload = function () {
+        resizeConfettiCanvas();
+        loadConfiguration();
+        renderConfiguration();
+        initEnvelope();
+        initScrollReveal();
+        initCountdown();
+        initModalsAndActions();
+      };
+    })();
+  </script>
+
+</body></html>
